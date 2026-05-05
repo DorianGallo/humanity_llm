@@ -258,10 +258,10 @@ class SettingsViewModel @Inject constructor(
             try {
                 val jsonString = FileUtils.readTextFromUri(application, uri)
                 if (jsonString != null) {
-                    val result = chatRepository.importChatsFromJson(jsonString)
+                    val result = chatRepository.importConversation(jsonString)
                     result.fold(
-                        onSuccess = { count ->
-                            Toast.makeText(application, "Imported $count chats", Toast.LENGTH_SHORT).show()
+                        onSuccess = {
+                            Toast.makeText(application, "Imported conversation", Toast.LENGTH_SHORT).show()
                         },
                         onFailure = { e ->
                             Toast.makeText(application, "Import failed: ${e.message}", Toast.LENGTH_LONG).show()

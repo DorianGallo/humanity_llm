@@ -1,32 +1,21 @@
 cmake_minimum_required(VERSION 3.22.1)
 project("smollm")
 
+# Force llama.cpp and all its sub-libraries to build as static archives.
+# This avoids Android shared-lib visibility issues where common_* symbols
+# would be hidden in libllama-common.so and unavailable for linking.
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
 # llama.cpp must be cloned at the project root as a submodule
 # git submodule add https://github.com/ggerganov/llama.cpp.git
 add_subdirectory(../../../../llama.cpp llama.cpp)
+
 set(LLAMA_DIR_RELATIVE "../../../../llama.cpp")
 get_filename_component(LLAMA_DIR ${LLAMA_DIR_RELATIVE} ABSOLUTE)
 
 set(GGML_DIR ${LLAMA_DIR}/ggml)
 set(COMMON_DIR ${LLAMA_DIR}/common)
 set(VENDOR_DIR ${LLAMA_DIR}/vendor)
-
-target_compile_options(
-        llama
-        PUBLIC
-        -fvisibility=hidden -fvisibility-inlines-hidden
-)
-target_compile_options(
-        llama
-        PUBLIC
-        -ffunction-sections -fdata-sections
-)
-target_link_options(
-        llama
-        PRIVATE
-        -Wl,--gc-sections -flto
-        -Wl,--exclude-libs,ALL
-)
 
 function(build_library target_name)
     add_library(
@@ -57,12 +46,12 @@ function(build_library target_name)
     )
     target_link_libraries(
             ${target_name}
-            android log llama common vulkan
+            android log llama llama-common vulkan
     )
     target_link_options(
             ${target_name}
             PRIVATE
-            -Wl,--gc-sections -flto
+            -Wl,--gc-sections
             -Wl,--exclude-libs,ALL
     )
 endfunction()
