@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.time.measureTime
 
-class InferenceEngine(private val ragPipeline: RagPipeline) {
+class InferenceEngine(internal val ragPipeline: RagPipeline) {
 
     private val instance = SmolLM()
     private val stateLock = ReentrantLock()

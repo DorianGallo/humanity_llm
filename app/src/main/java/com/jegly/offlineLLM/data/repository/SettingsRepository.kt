@@ -54,6 +54,9 @@ class SettingsRepository @Inject constructor(
         const val KEY_MATH_LATEX_HINTS = "math_latex_hints"
         const val KEY_TRANSLATOR_FROM = "translator_from"
         const val KEY_TRANSLATOR_TO = "translator_to"
+        const val KEY_ZIM_ENABLED = "zim_enabled"
+        const val KEY_ZIM_SERVER_URL = "zim_server_url"
+        const val KEY_ACTIVE_SYSTEM_PROMPT_TEMPLATE = "active_system_prompt_template"
         const val DEFAULT_TEMPERATURE = 0.7f
         const val DEFAULT_MAX_TOKENS = 2048
         const val DEFAULT_CONTEXT_SIZE = 4096
@@ -194,4 +197,16 @@ class SettingsRepository @Inject constructor(
     var translatorTo: String
         get() = prefs.getString(KEY_TRANSLATOR_TO, "es") ?: "es"
         set(value) = prefs.edit().putString(KEY_TRANSLATOR_TO, value).apply()
+
+    var zimEnabled: Boolean
+        get() = prefs.getBoolean(KEY_ZIM_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_ZIM_ENABLED, value).apply()
+
+    var zimServerUrl: String
+        get() = prefs.getString(KEY_ZIM_SERVER_URL, "localhost:8080") ?: "localhost:8080"
+        set(value) = prefs.edit().putString(KEY_ZIM_SERVER_URL, value).apply()
+
+    var activeSystemPromptTemplate: String
+        get() = prefs.getString(KEY_ACTIVE_SYSTEM_PROMPT_TEMPLATE, "zim_rag") ?: "zim_rag"
+        set(value) = prefs.edit().putString(KEY_ACTIVE_SYSTEM_PROMPT_TEMPLATE, value).apply()
 }

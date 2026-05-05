@@ -29,6 +29,12 @@ class ModelManager(
         CoroutineScope(Dispatchers.IO).launch {
             modelConfigRepository.seedIfEmpty()
         }
+        syncZimSettings()
+    }
+
+    fun syncZimSettings() {
+        inferenceEngine.ragPipeline.zimEnabled = settingsRepository.zimEnabled
+        inferenceEngine.ragPipeline.kiwixClient.serverUrl = settingsRepository.zimServerUrl
     }
 
     private val _copyProgress = MutableStateFlow(0f)

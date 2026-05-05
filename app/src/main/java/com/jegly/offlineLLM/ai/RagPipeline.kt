@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 @Singleton
 class RagPipeline @Inject constructor(
-    private val kiwixClient: KiwixClient
+    internal val kiwixClient: KiwixClient
 ) {
     var zimEnabled: Boolean = true
 
