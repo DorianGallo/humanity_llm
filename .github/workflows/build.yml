@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,12 +25,19 @@ jobs:
           distribution: 'temurin'
 
       - uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '11076708'
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
 
       - name: Rename APK
         run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/humanityLlm.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: humanityLlm
+          path: app/build/outputs/apk/debug/humanityLlm.apk
 
       - name: Delete existing latest release
         run: gh release delete latest --yes --cleanup-tag 2>/dev/null || true
