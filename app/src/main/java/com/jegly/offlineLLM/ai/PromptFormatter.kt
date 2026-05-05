@@ -103,6 +103,20 @@ object PromptFormatter {
                chatTemplate.contains("<|turn|>")
     }
 
+    /**
+     * Merges a system prompt template with a model's base system prompt.
+     * If base is blank, returns the template prompt as-is.
+     * If template is blank (e.g. "custom"), returns the base as-is.
+     * Otherwise prepends the model base to the template.
+     */
+    fun mergeSystemPrompt(templatePrompt: String, modelBasePrompt: String): String {
+        return when {
+            templatePrompt.isBlank() -> modelBasePrompt
+            modelBasePrompt.isBlank() -> templatePrompt
+            else -> "$modelBasePrompt\n\n$templatePrompt"
+        }
+    }
+
     fun redactForLog(content: String): String {
         if (content.length <= 10) return "[REDACTED]"
         return "${content.take(3)}...[REDACTED]...${content.takeLast(3)}"

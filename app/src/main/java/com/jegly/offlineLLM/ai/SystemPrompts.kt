@@ -117,6 +117,23 @@ object SystemPrompts {
             label = "Custom",
             prompt = ""
         ),
+
+        // ZIM-aware templates
+        PromptOption(
+            key = "zim_rag",
+            label = "ZIM-RAG Mode",
+            prompt = "You are a knowledgeable assistant with access to a ZIM offline knowledge base. When context from the knowledge base is provided, always cite your sources using [Source: <title>] notation. Use <think>...</think> tags to reason through questions before answering. Be accurate and comprehensive."
+        ),
+        PromptOption(
+            key = "coder_android",
+            label = "Coder Mode",
+            prompt = "You are an expert programming assistant with deep knowledge of Android, Kotlin, and Termux. Write clean, minimal code. Prefer solutions that work offline and on-device. Skip lengthy explanations unless asked. Point out potential issues concisely."
+        ),
+        PromptOption(
+            key = "fast_chat",
+            label = "Fast Chat",
+            prompt = "You are a helpful assistant. Be brief and direct."
+        ),
     )
 
     fun buildTranslatorPrompt(fromCode: String, toCode: String): String {
