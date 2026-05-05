@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -60,9 +58,13 @@ fun OnboardingScreen(
             .fillMaxSize()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        AnimatedContent(targetState = step, label = "onboarding_step") { currentStep ->
+        AnimatedContent(
+            targetState = step,
+            label = "onboarding_step",
+            modifier = Modifier.weight(1f),
+        ) { currentStep ->
             when (currentStep) {
                 0 -> WelcomeStep()
                 1 -> ModelSetupStep(
@@ -77,7 +79,7 @@ fun OnboardingScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Step indicators
         Row(
@@ -144,7 +146,7 @@ private fun WelcomeStep() {
             tint = MaterialTheme.colorScheme.primary,
         )
         Text(
-            text = "Welcome to offlineLLM",
+            text = "Welcome to Humanity LLM",
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
         )

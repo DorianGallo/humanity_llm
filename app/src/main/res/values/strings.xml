@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OfflineLLM</string>
+    <string name="app_name">Humanity LLM</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">Welcome to offlineLLM</string>
