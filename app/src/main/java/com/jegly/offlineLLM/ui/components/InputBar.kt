@@ -10,9 +10,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +36,7 @@ fun InputBar(
     isGenerating: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
+    onMicClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
@@ -63,6 +66,20 @@ fun InputBar(
             ),
             maxLines = 6,
         )
+
+        if (onMicClick != null) {
+            IconButton(
+                onClick = onMicClick,
+                modifier = Modifier.size(48.dp),
+                enabled = enabled && !isGenerating,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Mic,
+                    contentDescription = "Voice input",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
 
         AnimatedContent(
             targetState = isGenerating,

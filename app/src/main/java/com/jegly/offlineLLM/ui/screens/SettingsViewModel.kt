@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.jegly.offlineLLM.ai.KiwixClient
 import com.jegly.offlineLLM.ai.ModelManager
 import com.jegly.offlineLLM.data.local.entities.ModelInfo
 import com.jegly.offlineLLM.data.repository.ChatRepository
@@ -48,6 +49,10 @@ data class SettingsUiState(
     val translatorFrom: String = "en",
     val translatorTo: String = "es",
     val isImportingModel: Boolean = false,
+    val zimEnabled: Boolean = true,
+    val zimServerUrl: String = "localhost:8080",
+    val activeSystemPromptTemplate: String = "zim_rag",
+    val zimConnectionStatus: Boolean? = null, // null = untested, true = ok, false = failed
 )
 
 @HiltViewModel
@@ -56,6 +61,7 @@ class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val chatRepository: ChatRepository,
     private val modelManager: ModelManager,
+    private val kiwixClient: KiwixClient,
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(loadState())
@@ -98,6 +104,9 @@ class SettingsViewModel @Inject constructor(
             mathLatexHints = settingsRepository.mathLatexHints,
             translatorFrom = settingsRepository.translatorFrom,
             translatorTo = settingsRepository.translatorTo,
+            zimEnabled = settingsRepository.zimEnabled,
+            zimServerUrl = settingsRepository.zimServerUrl,
+            activeSystemPromptTemplate = settingsRepository.activeSystemPromptTemplate,
         )
     }
 
@@ -269,6 +278,32 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             chatRepository.deleteAllConversations()
             Toast.makeText(application, "All chats cleared", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun setZimEnabled(enabled: Boolean) {
+        settingsRepository.zimEnabled = enabled
+        modelManager.syncZimSettings()
+        _uiState.update { it.copy(zimEnabled = enabled) }
+    }
+
+    fun setZimServerUrl(url: String) {
+        settingsRepository.zimServerUrl = url
+        modelManager.syncZimSettings()
+        _uiState.update { it.copy(zimServerUrl = url) }
+    }
+
+    fun setActiveSystemPromptTemplate(key: String) {
+        settingsRepository.activeSystemPromptTemplate = key
+        _uiState.update { it.copy(activeSystemPromptTemplate = key) }
+    }
+
+    fun testZimConnection() {
+        viewModelScope.launch {
+            val reachable = kiwixClient.isReachable()
+            _uiState.update { it.copy(zimConnectionStatus = reachable) }
+            val msg = if (reachable) "ZIM server reachable" else "ZIM server not reachable"
+            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
         }
     }
 }

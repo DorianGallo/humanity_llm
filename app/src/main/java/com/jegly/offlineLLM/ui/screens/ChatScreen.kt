@@ -70,6 +70,7 @@ import com.jegly.offlineLLM.ui.components.InputBar
 import com.jegly.offlineLLM.ui.components.LoadingIndicator
 import com.jegly.offlineLLM.ui.components.MessageBubble
 import com.jegly.offlineLLM.ui.components.StreamingMessage
+import com.jegly.offlineLLM.ui.components.ZimStatusIndicator
 import kotlinx.coroutines.launch
 
 private val SensitiveDataKey = SemanticsPropertyKey<Boolean>("SensitiveData")
@@ -82,6 +83,7 @@ fun ChatScreen(
     viewModel: ChatViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val voiceText by viewModel.voiceText.collectAsStateWithLifecycle()
     val sensitiveDataModifier = if (
         uiState.sensitiveDataAccessibilityEnabled &&
         Build.VERSION.SDK_INT >= 36 // Android 16+
@@ -91,6 +93,14 @@ fun ChatScreen(
         Modifier
     }
     var inputText by rememberSaveable { mutableStateOf("") }
+
+    // When voiceText changes (non-blank), insert it into the input field
+    LaunchedEffect(voiceText) {
+        if (voiceText.isNotBlank()) {
+            inputText = voiceText
+            viewModel.clearVoiceText()
+        }
+    }
     var deleteTarget by remember { mutableStateOf<com.jegly.offlineLLM.data.local.entities.Message?>(null) }
     var showSearch by rememberSaveable { mutableStateOf(false) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
@@ -205,6 +215,10 @@ fun ChatScreen(
                         }
                     },
                     actions = {
+                        ZimStatusIndicator(
+                            isConnected = uiState.zimConnected,
+                            modifier = Modifier.padding(end = 4.dp).align(Alignment.CenterVertically),
+                        )
                         IconButton(onClick = { showSearch = !showSearch; if (!showSearch) searchQuery = "" }) {
                             Icon(
                                 if (showSearch) Icons.Filled.Close else Icons.Filled.Search,
@@ -331,6 +345,10 @@ fun ChatScreen(
                     onStop = { viewModel.stopGeneration() },
                     isGenerating = uiState.isGenerating,
                     enabled = uiState.modelState is ModelManager.ModelState.Ready,
+                    onMicClick = {
+                        if (uiState.isListening) viewModel.stopVoiceInput()
+                        else viewModel.startVoiceInput()
+                    },
                 )
             }
         }

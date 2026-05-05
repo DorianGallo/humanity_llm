@@ -4,9 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.jegly.offlineLLM.ai.InferenceEngine
+import com.jegly.offlineLLM.ai.KiwixClient
 import com.jegly.offlineLLM.ai.ModelManager
 import com.jegly.offlineLLM.ai.PromptFormatter
 import com.jegly.offlineLLM.ai.SystemPrompts
+import com.jegly.offlineLLM.ai.VoiceInputManager
 import com.jegly.offlineLLM.data.local.entities.Conversation
 import com.jegly.offlineLLM.data.local.entities.Message
 import com.jegly.offlineLLM.data.repository.ChatRepository
@@ -43,6 +45,8 @@ data class ChatUiState(
     val errorMessage: String? = null,
     val speakingMessageId: String? = null,
     val sensitiveDataAccessibilityEnabled: Boolean = false,
+    val zimConnected: Boolean = false,
+    val isListening: Boolean = false,
 )
 
 @HiltViewModel
@@ -52,10 +56,16 @@ class ChatViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val modelManager: ModelManager,
     private val inferenceEngine: InferenceEngine,
+    private val kiwixClient: KiwixClient,
+    private val voiceInputManager: VoiceInputManager,
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState
+
+    // Transcribed text emitted to the UI for insertion into the input field
+    private val _voiceText = MutableStateFlow("")
+    val voiceText: StateFlow<String> = _voiceText
 
     private val memoryMonitor = MemoryMonitor(application)
     private val ttsHelper = TtsHelper(application)
@@ -79,6 +89,14 @@ class ChatViewModel @Inject constructor(
                     )
                 }
                 delay(500)
+            }
+        }
+
+        // Poll ZIM connectivity every 10s
+        viewModelScope.launch {
+            while (true) {
+                _uiState.update { it.copy(zimConnected = kiwixClient.isReachable()) }
+                delay(10_000)
             }
         }
     }
@@ -375,6 +393,26 @@ class ChatViewModel @Inject constructor(
     fun stopSpeaking() {
         ttsHelper.stop()
         _uiState.update { it.copy(speakingMessageId = null) }
+    }
+
+    fun startVoiceInput() {
+        if (_uiState.value.isListening) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isListening = true) }
+            voiceInputManager.startListening().collect { text ->
+                if (text.isNotBlank()) _voiceText.value = text
+            }
+            _uiState.update { it.copy(isListening = false) }
+        }
+    }
+
+    fun stopVoiceInput() {
+        voiceInputManager.stopListening()
+        _uiState.update { it.copy(isListening = false) }
+    }
+
+    fun clearVoiceText() {
+        _voiceText.value = ""
     }
 
 

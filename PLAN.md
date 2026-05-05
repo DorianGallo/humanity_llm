@@ -119,7 +119,7 @@ New files:
 
 ---
 
-## Phase 5 — System Prompt Templates [ ]
+## Phase 5 — System Prompt Templates [x]
 
 **Goal**: Define 3 pre-configured system prompt templates; add template merging.
 
@@ -136,7 +136,7 @@ Modified files:
 
 ---
 
-## Phase 6 — Engine Integration [ ]
+## Phase 6 — Engine Integration [x]
 
 **Goal**: Wire RagPipeline into InferenceEngine; wire ModelConfig into ModelManager.
 
@@ -148,7 +148,7 @@ Modified files:
 
 ---
 
-## Phase 7 — Settings/Repository [ ]
+## Phase 7 — Settings/Repository [x]
 
 **Goal**: Persist ZIM settings and active system prompt template preference.
 
@@ -162,7 +162,7 @@ Modified files:
 
 ---
 
-## Phase 8 — Chat Export/Import [ ]
+## Phase 8 — Chat Export/Import [x]
 
 **Goal**: Export one conversation to JSON; import back.
 
@@ -184,7 +184,7 @@ Modified files:
 
 ---
 
-## Phase 9 — DI Wiring [ ]
+## Phase 9 — DI Wiring [x]
 
 **Goal**: Register all new classes with Hilt.
 
@@ -197,7 +197,7 @@ Modified files:
 
 ---
 
-## Phase 10 — UI [ ]
+## Phase 10 — UI [x]
 
 **Goal**: Add mic button, ZIM status dot, Model Config screen, Settings sections.
 

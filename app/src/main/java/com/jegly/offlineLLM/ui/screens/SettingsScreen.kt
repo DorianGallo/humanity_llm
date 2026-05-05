@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -79,6 +80,7 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToAbout: () -> Unit = {},
     onNavigateToHelp: () -> Unit = {},
+    onNavigateToModelConfig: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -505,6 +507,10 @@ fun SettingsScreen(
 
             // === DATA ===
             SectionHeader("Data Management")
+            Button(onClick = onNavigateToModelConfig, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.outlinedButtonColors()) {
+                Icon(Icons.Filled.Settings, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                Text("Model Presets")
+            }
             Button(onClick = { exportLauncher.launch("offlinellm_export.json") }, modifier = Modifier.fillMaxWidth()) {
                 Icon(Icons.Filled.Upload, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
                 Text("Export Chats as JSON")
@@ -516,6 +522,72 @@ fun SettingsScreen(
             Button(onClick = { showClearDialog = true }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) {
                 Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
                 Text("Clear All Chats")
+            }
+
+            HorizontalDivider()
+
+            // === ZIM SERVER ===
+            SectionHeader("ZIM Knowledge Base")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("Enable ZIM context", modifier = Modifier.weight(1f))
+                Switch(
+                    checked = uiState.zimEnabled,
+                    onCheckedChange = { viewModel.setZimEnabled(it) },
+                )
+            }
+            OutlinedTextField(
+                value = uiState.zimServerUrl,
+                onValueChange = { viewModel.setZimServerUrl(it) },
+                label = { Text("Server URL") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                enabled = uiState.zimEnabled,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { viewModel.testZimConnection() }, enabled = uiState.zimEnabled) {
+                    Text("Test Connection")
+                }
+                uiState.zimConnectionStatus?.let { ok ->
+                    Text(
+                        if (ok) "Connected" else "Not reachable",
+                        color = if (ok) androidx.compose.ui.graphics.Color(0xFF4CAF50) else MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    )
+                }
+            }
+
+            HorizontalDivider()
+
+            // === SYSTEM PROMPT TEMPLATE ===
+            SectionHeader("System Prompt Template")
+            val zimTemplateKeys = listOf("zim_rag", "coder_android", "fast_chat")
+            zimTemplateKeys.forEach { key ->
+                val option = com.jegly.offlineLLM.ai.SystemPrompts.options.find { it.key == key }
+                if (option != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = uiState.activeSystemPromptTemplate == key,
+                                onClick = { viewModel.setActiveSystemPromptTemplate(key) },
+                                role = Role.RadioButton,
+                            )
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = uiState.activeSystemPromptTemplate == key,
+                            onClick = { viewModel.setActiveSystemPromptTemplate(key) },
+                        )
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text(option.label, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
             }
 
             HorizontalDivider()

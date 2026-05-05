@@ -6,4 +6,5 @@ sealed class Routes(val route: String) {
     data object Settings : Routes("settings")
     data object About : Routes("about")
     data object Help : Routes("help")
+    data object ModelConfig : Routes("model_config")
 }
