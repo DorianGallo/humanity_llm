@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,9 +29,17 @@ jobs:
       - name: Rename APK
         run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/humanityLlm.apk
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: humanityLlm
-          path: app/build/outputs/apk/debug/humanityLlm.apk
-          retention-days: 30
+      - name: Delete existing latest release
+        run: gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release
+        run: |
+          gh release create latest \
+            --title "Latest Build" \
+            --notes "Auto-built from commit ${{ github.sha }}" \
+            --prerelease \
+            app/build/outputs/apk/debug/humanityLlm.apk
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
