@@ -14,6 +14,9 @@ interface ConversationDao {
     @Query("SELECT * FROM conversations ORDER BY updatedAt DESC")
     fun getAllConversations(): Flow<List<Conversation>>
 
+    @Query("SELECT * FROM conversations ORDER BY updatedAt DESC")
+    suspend fun getAllConversationsSync(): List<Conversation>
+
     @Query("SELECT * FROM conversations WHERE id = :id")
     suspend fun getConversation(id: String): Conversation?
 

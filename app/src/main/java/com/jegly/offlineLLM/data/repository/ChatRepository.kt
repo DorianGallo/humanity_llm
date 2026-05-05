@@ -106,39 +106,40 @@ class ChatRepository @Inject constructor(
 
     suspend fun deleteModel(id: Long) = modelDao.delete(id)
 
-    // Export / Import Meow
-    suspend fun exportChatsToJson(): String {
+    // Export / Import
+    suspend fun exportConversation(conversationId: String): String {
         val json = Json { prettyPrint = true }
-        val conversations = conversationDao.getAllConversations() // we need sync version
-        val allConvs = mutableListOf<Conversation>()
-        // Use a simple collect approach
-        val count = conversationDao.getCount()
-        if (count == 0) return json.encodeToString(ExportData(chats = emptyList()))
-
-        val exportedChats = mutableListOf<ExportedChat>()
-        // We need sync access for export, get all conversations
-        val convList = getMostRecentConversation()?.let { recent ->
-            // Workaround: get all messages for each conversation
-            listOf(recent) // This will be handled properly in the ViewModel
-        } ?: emptyList()
-
-        return json.encodeToString(ExportData(chats = exportedChats))
+        val conversation = conversationDao.getConversation(conversationId)
+            ?: return json.encodeToString(ExportData(chats = emptyList()))
+        val messages = messageDao.getMessagesForConversationSync(conversationId)
+        val exported = ExportedChat(
+            title = conversation.title,
+            systemPromptKey = conversation.systemPromptKey,
+            createdAt = conversation.createdAt,
+            messages = messages.map { ExportedMessage(it.role, it.content, it.timestamp) }
+        )
+        return json.encodeToString(ExportData(chats = listOf(exported)))
     }
 
     suspend fun exportAllChats(): String {
         val json = Json { prettyPrint = true }
-        val exportedChats = mutableListOf<ExportedChat>()
-
-        // We can't easily collect Flow here, so we use a different approach
-        // The ViewModel will handle the full export logic Meow
+        val conversations = conversationDao.getAllConversationsSync()
+        val exportedChats = conversations.map { conv ->
+            val messages = messageDao.getMessagesForConversationSync(conv.id)
+            ExportedChat(
+                title = conv.title,
+                systemPromptKey = conv.systemPromptKey,
+                createdAt = conv.createdAt,
+                messages = messages.map { ExportedMessage(it.role, it.content, it.timestamp) }
+            )
+        }
         return json.encodeToString(ExportData(chats = exportedChats))
     }
 
-    suspend fun importChatsFromJson(jsonString: String): Result<Int> {
+    suspend fun importConversation(jsonString: String): Result<Unit> {
         return try {
             val json = Json { ignoreUnknownKeys = true }
             val data = json.decodeFromString<ExportData>(jsonString)
-            var count = 0
             for (chat in data.chats) {
                 val conversation = Conversation(
                     title = chat.title,
@@ -158,9 +159,8 @@ class ChatRepository @Inject constructor(
                         )
                     )
                 }
-                count++
             }
-            Result.success(count)
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
