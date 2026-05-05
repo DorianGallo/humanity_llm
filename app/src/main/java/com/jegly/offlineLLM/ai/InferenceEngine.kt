@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.time.measureTime
 
-class InferenceEngine {
+class InferenceEngine(private val ragPipeline: RagPipeline) {
 
     private val instance = SmolLM()
     private val stateLock = ReentrantLock()
@@ -115,12 +115,13 @@ class InferenceEngine {
             generationJob = CoroutineScope(Dispatchers.Default).launch {
                 try {
                     isGenerating = true
+                    val enrichedQuery = ragPipeline.enrichPrompt(query)
                     val fullResponse = StringBuilder()
                     var stopRequested = false
                     var tokensSinceLastEmit = 0
 
                     val duration = measureTime {
-                        instance.getResponseAsFlow(query).collect { piece ->
+                        instance.getResponseAsFlow(enrichedQuery).collect { piece ->
                             if (stopRequested) return@collect
 
                             fullResponse.append(piece)

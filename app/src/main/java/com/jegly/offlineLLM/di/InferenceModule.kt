@@ -3,7 +3,9 @@ package com.jegly.offlineLLM.di
 import android.content.Context
 import com.jegly.offlineLLM.ai.InferenceEngine
 import com.jegly.offlineLLM.ai.ModelManager
+import com.jegly.offlineLLM.ai.RagPipeline
 import com.jegly.offlineLLM.data.repository.ChatRepository
+import com.jegly.offlineLLM.data.repository.ModelConfigRepository
 import com.jegly.offlineLLM.data.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
@@ -18,7 +20,7 @@ object InferenceModule {
 
     @Provides
     @Singleton
-    fun provideInferenceEngine(): InferenceEngine = InferenceEngine()
+    fun provideInferenceEngine(ragPipeline: RagPipeline): InferenceEngine = InferenceEngine(ragPipeline)
 
     @Provides
     @Singleton
@@ -27,5 +29,6 @@ object InferenceModule {
         chatRepository: ChatRepository,
         settingsRepository: SettingsRepository,
         inferenceEngine: InferenceEngine,
-    ): ModelManager = ModelManager(context, chatRepository, settingsRepository, inferenceEngine)
+        modelConfigRepository: ModelConfigRepository,
+    ): ModelManager = ModelManager(context, chatRepository, settingsRepository, inferenceEngine, modelConfigRepository)
 }

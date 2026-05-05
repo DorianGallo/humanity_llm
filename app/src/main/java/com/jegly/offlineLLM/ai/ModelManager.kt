@@ -4,12 +4,15 @@ import android.content.Context
 import android.net.Uri
 import com.jegly.offlineLLM.data.local.entities.ModelInfo
 import com.jegly.offlineLLM.data.repository.ChatRepository
+import com.jegly.offlineLLM.data.repository.ModelConfigRepository
 import com.jegly.offlineLLM.data.repository.SettingsRepository
 import com.jegly.offlineLLM.smollm.GGUFReader
 import com.jegly.offlineLLM.smollm.SmolLM
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -18,8 +21,15 @@ class ModelManager(
     private val chatRepository: ChatRepository,
     private val settingsRepository: SettingsRepository,
     private val inferenceEngine: InferenceEngine,
+    private val modelConfigRepository: ModelConfigRepository,
 ) {
     private val modelsDir = File(context.filesDir, "models").apply { mkdirs() }
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            modelConfigRepository.seedIfEmpty()
+        }
+    }
 
     private val _copyProgress = MutableStateFlow(0f)
     val copyProgress: StateFlow<Float> = _copyProgress
@@ -130,13 +140,14 @@ class ModelManager(
 
         inferenceEngine.unloadModel()
 
+        val activeConfig = modelConfigRepository.getActiveConfig()
         val params = SmolLM.InferenceParams(
-            temperature = settingsRepository.temperature,
-            topP = settingsRepository.topP,
-            topK = settingsRepository.topK,
+            temperature = activeConfig?.temperature ?: settingsRepository.temperature,
+            topP = activeConfig?.topP ?: settingsRepository.topP,
+            topK = activeConfig?.topK ?: settingsRepository.topK,
             minP = settingsRepository.minP,
-            repeatPenalty = settingsRepository.repeatPenalty,
-            contextSize = settingsRepository.contextSize.toLong(),
+            repeatPenalty = activeConfig?.repeatPenalty ?: settingsRepository.repeatPenalty,
+            contextSize = activeConfig?.contextSize?.toLong() ?: settingsRepository.contextSize.toLong(),
             numThreads = settingsRepository.numThreads,
         )
 
