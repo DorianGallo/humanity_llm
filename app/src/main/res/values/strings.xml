@@ -3,7 +3,7 @@
     <string name="app_name">Humanity LLM</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_welcome_title">Welcome to offlineLLM</string>
+    <string name="onboarding_welcome_title">Welcome to Humanity LLM</string>
     <string name="onboarding_welcome_desc">Your private AI assistant. All processing happens on-device. No internet. No tracking. No cloud.</string>
     <string name="onboarding_model_title">Setting Up Your Model</string>
     <string name="onboarding_model_desc">Preparing the AI model for first use. This only happens once.</string>

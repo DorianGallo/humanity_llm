@@ -179,7 +179,7 @@ class SettingsRepository @Inject constructor(
         set(value) = prefs.edit().putString(KEY_THEME_MODE, value).apply()
 
     var accentColor: String
-        get() = prefs.getString(KEY_ACCENT_COLOR, "dynamic") ?: "dynamic"
+        get() = prefs.getString(KEY_ACCENT_COLOR, "blue") ?: "blue"
         set(value) = prefs.edit().putString(KEY_ACCENT_COLOR, value).apply()
 
     var disableThinking: Boolean

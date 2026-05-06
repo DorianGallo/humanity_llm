@@ -177,7 +177,7 @@ fun ChatScreen(
                     title = {
                         Column {
                             Text(
-                                text = uiState.currentConversation?.title ?: "OfflineLLM",
+                                text = uiState.currentConversation?.title ?: "Humanity LLM",
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -286,7 +286,7 @@ fun ChatScreen(
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
-                                        text = "OfflineLLM",
+                                        text = "Humanity LLM",
                                         style = MaterialTheme.typography.headlineMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                     )

@@ -599,7 +599,7 @@ fun SettingsScreen(
             }
             Button(onClick = onNavigateToAbout, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.outlinedButtonColors()) {
                 Icon(Icons.Filled.Info, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-                Text("About OfflineLLM")
+                Text("About Humanity LLM")
             }
 
             Spacer(modifier = Modifier.height(32.dp))

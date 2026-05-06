@@ -61,7 +61,7 @@ private fun buildColorScheme(seed: Color, isDark: Boolean): ColorScheme {
 }
 
 @Composable
-fun OfflineLLMTheme(
+fun HumanityLLMTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     accentColorKey: String = "dynamic",
     content: @Composable () -> Unit

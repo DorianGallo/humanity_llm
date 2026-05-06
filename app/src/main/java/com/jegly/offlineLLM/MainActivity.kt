@@ -20,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jegly.offlineLLM.data.repository.SettingsRepository
 import com.jegly.offlineLLM.ui.navigation.NavGraph
 import com.jegly.offlineLLM.ui.navigation.Routes
-import com.jegly.offlineLLM.ui.theme.OfflineLLMTheme
+import com.jegly.offlineLLM.ui.theme.HumanityLLMTheme
 import com.jegly.offlineLLM.ui.theme.ThemeMode
 import com.jegly.offlineLLM.utils.BiometricHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +87,7 @@ class MainActivity : FragmentActivity() {
             }
 
 
-            OfflineLLMTheme(themeMode = themeMode, accentColorKey = accentColorState.value) {
+            HumanityLLMTheme(themeMode = themeMode, accentColorKey = accentColorState.value) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,

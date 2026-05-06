@@ -53,12 +53,12 @@ fun HelpScreen(
         ) {
             HelpSection(
                 title = "Getting a Model",
-                content = "OfflineLLM needs a GGUF model file to work. Here\u2019s how to get one:\n\n" +
+                content = "Humanity LLM needs a GGUF model file to work. Here\u2019s how to get one:\n\n" +
                     "1. Visit huggingface.co on your phone or PC\n" +
                     "2. Search for a model (e.g. \u201Cgemma 3 1b GGUF\u201D or \u201Cqwen 0.8b GGUF\u201D)\n" +
                     "3. Look for files ending in .gguf \u2014 choose Q4_K_M for best quality/speed balance\n" +
                     "4. Download the .gguf file to your device\n" +
-                    "5. In OfflineLLM, go to Settings \u2192 Import GGUF Model\n" +
+                    "5. In Humanity LLM, go to Settings \u2192 Import GGUF Model\n" +
                     "6. Select the downloaded file"
             )
 
@@ -94,7 +94,7 @@ fun HelpScreen(
 
             HelpSection(
                 title = "Privacy",
-                content = "OfflineLLM has no internet permission. Your conversations never leave your device. " +
+                content = "Humanity LLM has no internet permission. Your conversations never leave your device. " +
                     "The app cannot connect to any server, send analytics, or transmit data of any kind. " +
                     "All processing happens entirely on your phone\u2019s CPU."
             )
