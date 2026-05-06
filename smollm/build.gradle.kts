@@ -35,7 +35,6 @@ android {
                 arguments += "-DLLAMA_CURL=OFF"
                 arguments += "-DGGML_LLAMAFILE=OFF"
                 arguments += "-DGGML_NEON=ON"
-                arguments += "-DGGML_CPU_ARM_ARCH=native"
                 if (sdkDir.isNotEmpty()) {
                     arguments += "-DCMAKE_MAKE_PROGRAM=$sdkDir/cmake/3.22.1/bin/ninja"
                 }
