@@ -17,12 +17,26 @@ android {
         versionCode = 6
         versionName = "5.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            // arm64-v8a: real devices; x86_64: emulator (no ARM translation overhead)
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("SIGNING_STORE_FILE") ?: "release.keystore")
+            storePassword = System.getenv("SIGNING_STORE_PASSWORD") ?: "humanityllm"
+            keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: "release"
+            keyPassword = System.getenv("SIGNING_KEY_PASSWORD") ?: "humanityllm"
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

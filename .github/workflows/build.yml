@@ -28,16 +28,28 @@ jobs:
         with:
           cmdline-tools-version: '11076708'
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon
+      - name: Generate release keystore
+        run: |
+          keytool -genkey -v -keystore ${{ github.workspace }}/release.keystore \
+            -alias release -keyalg RSA -keysize 2048 -validity 3650 \
+            -dname "CN=HumanityLLM,O=Dev,C=US" \
+            -storepass humanityllm -keypass humanityllm
+
+      - name: Build release APK
+        run: ./gradlew assembleRelease --no-daemon
+        env:
+          SIGNING_STORE_FILE: ${{ github.workspace }}/release.keystore
+          SIGNING_STORE_PASSWORD: humanityllm
+          SIGNING_KEY_ALIAS: release
+          SIGNING_KEY_PASSWORD: humanityllm
 
       - name: Rename APK
-        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/humanityLlm.apk
+        run: mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/humanityLlm.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: humanityLlm
-          path: app/build/outputs/apk/debug/humanityLlm.apk
+          path: app/build/outputs/apk/release/humanityLlm.apk
 
       - name: Delete existing latest release
         run: gh release delete latest --yes --cleanup-tag 2>/dev/null || true
@@ -50,6 +62,6 @@ jobs:
             --title "Latest Build" \
             --notes "Auto-built from commit ${{ github.sha }}" \
             --prerelease \
-            app/build/outputs/apk/debug/humanityLlm.apk
+            app/build/outputs/apk/release/humanityLlm.apk
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
