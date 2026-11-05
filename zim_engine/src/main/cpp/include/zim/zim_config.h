@@ -1,0 +1,9 @@
+#ifndef ZIM_CONFIG_H
+#define ZIM_CONFIG_H
+
+#define LIBZIM_VERSION "9.4.0"
+#define LIBZIM_VERSION_MAJOR 9
+#define LIBZIM_VERSION_MINOR 4
+#define LIBZIM_VERSION_PATCH 0
+
+#endif // ZIM_CONFIG_H

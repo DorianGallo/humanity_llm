@@ -1,0 +1,137 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+}
+
+android {
+    namespace = "com.jegly.offlineLLM"
+    compileSdk = 37
+
+    defaultConfig {
+        applicationId = "com.jegly.offlineLLM"
+        minSdk = 30
+        targetSdk = 37
+        versionCode = 6
+        versionName = "5.0.1"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            // arm64-v8a: real devices; x86_64: emulator (no ARM translation overhead)
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("SIGNING_STORE_FILE") ?: "release.keystore")
+            storePassword = System.getenv("SIGNING_STORE_PASSWORD") ?: "humanityllm"
+            keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: "release"
+            keyPassword = System.getenv("SIGNING_KEY_PASSWORD") ?: "humanityllm"
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        compose = true
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+        jniLibs {
+            pickFirsts += listOf("**/libonnxruntime.so", "**/libsherpa-onnx-jni.so")
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+dependencies {
+    // Native inference module
+    implementation(project(":smollm"))
+    implementation(project(":zim_engine"))
+
+    // Compose BOM
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
+    implementation(libs.compose.animation)
+    implementation(libs.compose.foundation)
+
+    // Activity & Navigation
+    implementation(libs.activity.compose)
+    implementation(libs.navigation.compose)
+
+    // Lifecycle
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    // Room
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+
+    // Coroutines
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
+
+    // Security
+    implementation(libs.security.crypto)
+    implementation(libs.biometric)
+
+    // Core
+    implementation(libs.core.ktx)
+    implementation(libs.core.splashscreen)
+
+    // Serialization
+    implementation(libs.serialization.json)
+
+    // OkHttp — Kiwix ZIM server queries (localhost only)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Document Ingestion
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+    implementation("org.jsoup:jsoup:1.17.2")
+
+    // Markdown rendering
+    implementation(libs.markdown.renderer.m3)
+    implementation(libs.markdown.renderer.code)
+
+    // Debug
+    debugImplementation(libs.compose.ui.tooling)
+}

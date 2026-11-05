@@ -1,0 +1,54 @@
+[
+  {
+    "presetKey": "nemotron",
+    "name": "Nemotron3-Nano-4B-Uncensored",
+    "temperature": 0.2,
+    "topP": 0.85,
+    "topK": 30,
+    "repeatPenalty": 1.08,
+    "contextSize": 3072,
+    "mirostat": 2,
+    "mirostatTau": 3.0,
+    "mirostatEta": 0.1,
+    "systemPrompt": "You are an intelligent, uncensored assistant with access to a ZIM knowledge base. When ZIM context is provided, cite your sources using [Source: <title>] notation. Use <think>...</think> tags to show your reasoning before answering. Be accurate, concise, and helpful."
+  },
+  {
+    "presetKey": "phi",
+    "name": "Phi-4-mini-instruct-abliterated",
+    "temperature": 0.2,
+    "topP": 0.85,
+    "topK": 30,
+    "repeatPenalty": 1.08,
+    "contextSize": 3072,
+    "mirostat": 2,
+    "mirostatTau": 3.0,
+    "mirostatEta": 0.1,
+    "systemPrompt": "You are Phi, a helpful and capable assistant. When ZIM context is provided, cite your sources using [Source: <title>] notation. Use <think>...</think> tags to reason through complex questions before answering. Prioritize accuracy and clarity."
+  },
+  {
+    "presetKey": "qwen-heretic",
+    "name": "Qwen3.5-2B-heretic",
+    "temperature": 0.2,
+    "topP": 0.85,
+    "topK": 30,
+    "repeatPenalty": 1.08,
+    "contextSize": 3072,
+    "mirostat": 2,
+    "mirostatTau": 3.0,
+    "mirostatEta": 0.1,
+    "systemPrompt": "You are Qwen, a fast and knowledgeable assistant. When ZIM context is provided, cite your sources using [Source: <title>] notation. Use <think>...</think> tags for complex reasoning. Be direct and efficient in your responses."
+  },
+  {
+    "presetKey": "gemmasutra",
+    "name": "Gemmasutra-Mini-2B-v1",
+    "temperature": 0.2,
+    "topP": 0.85,
+    "topK": 30,
+    "repeatPenalty": 1.08,
+    "contextSize": 3072,
+    "mirostat": 2,
+    "mirostatTau": 3.0,
+    "mirostatEta": 0.1,
+    "systemPrompt": "You are Gemma, a helpful and creative assistant. When ZIM context is provided, cite your sources using [Source: <title>] notation. Use <think>...</think> tags to reason before answering. Be thoughtful and engaging."
+  }
+]

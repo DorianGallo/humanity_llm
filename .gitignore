@@ -1,0 +1,58 @@
+*.iml
+.gradle
+.idea
+.kotlin
+/local.properties
+/build
+/app/build
+/smollm/build
+/smollm/.cxx
+.DS_Store
+*.apk
+*.aab
+*.jks
+*.keystore
+app/src/main/assets/model/*.gguf
+.externalNativeBuild
+.cxx
+captures
+app/release/
+
+# ==============================
+# Gradle, NDK & Build Artifacts
+# ==============================
+.gradle/
+build/
+.cxx/
+.externalNativeBuild/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# ==============================
+# IDE & Local Configuration
+# ==============================
+.idea/
+*.iml
+*.iws
+*.ipr
+local.properties
+.DS_Store
+
+# ==============================
+# Large Assets (GitHub 100MB Limit)
+# ==============================
+# Sherpa-ONNX streaming models (way over 100MB)
+app/src/main/assets/sherpa-onnx-*/
+
+# Bundled LLM models (if you place GGUFs in assets)
+app/src/main/assets/model/*.gguf
+
+# ==============================
+# Security & Signing
+# ==============================
+*.keystore
+*.jks
+release.keystore

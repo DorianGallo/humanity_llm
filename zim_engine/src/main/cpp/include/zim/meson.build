@@ -1,0 +1,35 @@
+zim_config = configure_file(output : 'zim_config.h',
+                            configuration : public_conf)
+
+install_headers(
+    'archive.h',
+    'blob.h',
+    'error.h',
+    'illustration.h',
+    'item.h',
+    'entry.h',
+    'uuid.h',
+    'zim.h',
+    'suggestion.h',
+    'suggestion_iterator.h',
+    'tools.h',
+    'version.h',
+    zim_config,
+    subdir:'zim'
+)
+
+if xapian_dep.found()
+  install_headers(
+    'search.h',
+    'search_iterator.h',
+    subdir:'zim'
+  )
+endif
+
+install_headers(
+    'writer/item.h',
+    'writer/creator.h',
+    'writer/contentProvider.h',
+    subdir:'zim/writer'
+)
+
